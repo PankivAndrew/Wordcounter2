@@ -24,15 +24,20 @@ inline long long to_us(const D& d)
     return std::chrono::duration_cast<std::chrono::microseconds>(d).count();
 }
 
-void write_in_file(map<string,int> &global_map,const string &result_file) {
+void write_in_file(map<string,int> &global_map,const string &file) {
     ofstream myfile;
-    myfile.open (result_file);
+    myfile.open (file);
     for(auto i = global_map.cbegin(); i != global_map.cend(); ++i){
         myfile << "\""<< i->first << "\"" << ": " << i->second << endl;
     }
     myfile.close();
 }
+void write_result_in_file(const string &result_file,long long int total_time){
+    ofstream myfile;
+    myfile.open (result_file,ios_base::app);
+    myfile << total_time << endl;
 
+}
 void read_file(int &flag,size_t block_size,string nameOFfile,deque<vector<string>> &que_with_work,mutex &k,condition_variable &cv_read) {
     vector<string> words;
     ifstream myfile(nameOFfile);
@@ -201,6 +206,7 @@ int main() {
     map<string,int> global_map;
     const string config_file = "config.txt";
     const string result_file = "result.txt";
+    const string total_time_file = "total_times.txt";
     mutex m,f,k;
     condition_variable cv_read,cv_count;
     string in_file;
@@ -216,5 +222,6 @@ int main() {
     auto stage1_finish = get_current_time_fenced();
     auto total_time = stage1_finish - stage1_start;
     printf("Time of total work: %llu\n",to_us(total_time));
+    write_result_in_file(cref(total_time_file),to_us(total_time));
     return 0;
 }
