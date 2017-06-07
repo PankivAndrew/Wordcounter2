@@ -24,9 +24,9 @@ inline long long to_us(const D& d)
     return std::chrono::duration_cast<std::chrono::microseconds>(d).count();
 }
 
-void write_in_file(map<string,int> &global_map) {
+void write_in_file(map<string,int> &global_map,const string &result_file) {
     ofstream myfile;
-    myfile.open ("result.txt");
+    myfile.open (result_file);
     for(auto i = global_map.cbegin(); i != global_map.cend(); ++i){
         myfile << "\""<< i->first << "\"" << ": " << i->second << endl;
     }
@@ -200,6 +200,7 @@ int main() {
     auto stage1_start = get_current_time_fenced();
     map<string,int> global_map;
     const string config_file = "config.txt";
+    const string result_file = "result.txt";
     mutex m,f,k;
     condition_variable cv_read,cv_count;
     string in_file;
@@ -211,7 +212,7 @@ int main() {
     auto stage2_finish = get_current_time_fenced();
     auto time_of_counting = stage2_finish - stag2_start;
     printf("Time of counting words: %llu\n",to_us(time_of_counting));
-    write_in_file(global_map);
+    write_in_file(global_map,cref(result_file));
     auto stage1_finish = get_current_time_fenced();
     auto total_time = stage1_finish - stage1_start;
     printf("Time of total work: %llu\n",to_us(total_time));
